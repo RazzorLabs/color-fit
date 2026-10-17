@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Card & Color Workout</title>
+  <title>Color & Card Workout</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .perspective-1000 { perspective: 1000px; }
@@ -15,16 +15,23 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans select-none antialiased">
 
-  <!-- HORNÁ LIŠTA (Časovač & Ovládacie prvky) -->
+  <!-- HORNÁ LIŠTA (Časovač, Reset & Nastavenia) -->
   <header class="w-full max-w-xl mx-auto px-4 py-3 flex items-center justify-between border-b border-slate-800">
     <div class="flex items-center gap-2">
-      <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse" id="wakeLockDot" title="Screen Wake Lock"></span>
-      <h1 class="text-base font-bold tracking-wider uppercase text-slate-300">WOD Cards</h1>
+      <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" id="wakeLockDot" title="Screen Wake Lock aktívny"></span>
+      <h1 class="text-base font-bold tracking-wider uppercase text-slate-300">ColorFit</h1>
     </div>
     
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-3">
       <div class="font-mono text-xl font-black text-amber-400" id="timerDisplay">00:00</div>
-      <button id="btnSettings" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+      
+      <!-- Tlačidlo na ukončenie / reset tréningu -->
+      <button id="btnResetWorkout" class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-800/60 text-rose-300 text-xs font-bold transition flex items-center gap-1" title="Ukončiť tréning">
+        <span>⏹</span>
+        <span>Ukončiť</span>
+      </button>
+
+      <button id="btnSettings" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Nastavenia">
         ⚙️
       </button>
     </div>
@@ -33,17 +40,17 @@
   <!-- HLAVNÝ TRÉNINGOVÝ OBSAH -->
   <main class="flex-1 w-full max-w-xl mx-auto p-4 flex flex-col items-center justify-between gap-4">
     
-    <!-- Lišta s progresom tréningu -->
+    <!-- Progres a celkové opakovania -->
     <div class="w-full flex items-center justify-between text-xs font-mono text-slate-400 px-1">
       <span id="deckProgress">Zostáva: 0 / 0</span>
       <span id="totalRepsCount">Spolu opakovaní: 0</span>
     </div>
 
-    <!-- KARTA (Interaktívna 3D plocha) -->
+    <!-- KARTA -->
     <div class="w-full flex-1 flex items-center justify-center min-h-[380px] perspective-1000">
       <div id="cardElement" class="w-full max-w-sm aspect-[5/7] max-h-[500px] relative transform-style-3d transition-transform duration-500 cursor-pointer shadow-2xl rounded-3xl">
         
-        <!-- Predná strana (rub balíčka / Štart) -->
+        <!-- Predná strana (Rub balíčka / Štart) -->
         <div id="cardBackFace" class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 border-4 border-indigo-500/30 rounded-3xl flex flex-col items-center justify-center p-6 text-center shadow-inner backface-hidden">
           <div class="w-20 h-20 rounded-2xl bg-indigo-600/20 border border-indigo-400/40 flex items-center justify-center text-4xl mb-4">
             🃏
@@ -55,28 +62,25 @@
           </div>
         </div>
 
-        <!-- Zadná strana (líc karty s číslom a cvikom) -->
+        <!-- Zadná strana (Líc karty s cvikom) -->
         <div id="cardFrontFace" class="absolute inset-0 bg-white border-8 border-slate-200 rounded-3xl flex flex-col justify-between p-6 text-slate-950 backface-hidden rotate-y-180 shadow-2xl overflow-hidden">
           
-          <!-- Horný roh karty -->
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5 font-black text-4xl" id="cornerSymbolTop">
               <span id="cardValueTop">10</span>
               <span id="cardSuitTop">♠</span>
             </div>
-            <span class="text-xs uppercase font-bold tracking-widest px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 font-mono" id="cardCategoryTag">PUSH</span>
+            <span class="text-xs uppercase font-bold tracking-widest px-2.5 py-1 rounded-md bg-slate-100/30 font-mono" id="cardCategoryTag">WOD</span>
           </div>
 
-          <!-- Stred karty: Názov cviku a veľký počet opakovaní -->
           <div class="text-center my-auto flex flex-col items-center">
-            <div class="text-7xl font-black tracking-tighter my-1" id="cardMainValue">10</div>
-            <div class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-1">opakovaní</div>
-            <div class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-slate-900 px-2 leading-tight" id="cardExerciseName">
+            <div class="text-7xl sm:text-8xl font-black tracking-tighter my-1" id="cardMainValue">10</div>
+            <div class="text-xs uppercase tracking-widest opacity-75 font-bold mb-1">opakovaní</div>
+            <div class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight px-2 leading-tight" id="cardExerciseName">
               Kľuky
             </div>
           </div>
 
-          <!-- Spodný roh karty (otočený) -->
           <div class="flex items-center justify-between rotate-180">
             <div class="flex items-center gap-1.5 font-black text-4xl" id="cornerSymbolBottom">
               <span id="cardValueBottom">10</span>
@@ -89,16 +93,13 @@
       </div>
     </div>
 
-    <!-- Spodné tlačidlo a štatistika po cvikoch -->
+    <!-- Spodné tlačidlo a súhrn -->
     <div class="w-full flex flex-col gap-3">
       <button id="btnNext" class="w-full py-4 bg-indigo-600 active:bg-indigo-700 hover:bg-indigo-500 text-white font-black text-lg tracking-wider uppercase rounded-2xl shadow-lg shadow-indigo-600/30 transition transform active:scale-[0.98]">
         Ďalšia karta
       </button>
 
-      <!-- Rozpis počtu opakovaní pre jednotlivé znaky/farby -->
-      <div id="repsSummaryGrid" class="grid grid-cols-4 gap-2 text-center text-xs font-mono">
-        <!-- Dynamicky plnené podľa počtu aktívnych farieb -->
-      </div>
+      <div id="repsSummaryGrid" class="grid grid-cols-4 gap-2 text-center text-xs font-mono"></div>
     </div>
 
   </main>
@@ -109,7 +110,7 @@
       
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
         <h2 class="text-lg font-bold text-white">Nastavenie tréningu</h2>
-        <button id="btnCloseSettings" class="text-slate-400 hover:text-white p-1 text-xl">✕</button>
+        <button id="btnCloseSettings" class="text-slate-400 hover:text-white p-1 text-xl font-bold">✕</button>
       </div>
 
       <div class="p-6 overflow-y-auto space-y-6 flex-1 text-sm">
@@ -127,7 +128,7 @@
           </div>
         </div>
 
-        <!-- NASTAVENIA PRE KLASICKÝ REŽIM (1-4 farby) -->
+        <!-- REŽIM 1: KLASICKÝ BALÍČEK (1 až 4 farby) -->
         <div id="classicOptions" class="space-y-4">
           <div>
             <label class="block text-xs uppercase font-bold text-slate-400 mb-2">Počet farieb v hre</label>
@@ -137,50 +138,46 @@
               <button data-suits="3" class="suit-count-btn py-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 font-bold">3 (39k)</button>
               <button data-suits="4" class="suit-count-btn py-2 rounded-lg border border-indigo-500 bg-indigo-500/20 text-white font-bold">4 (52k)</button>
             </div>
-            <p class="text-[11px] text-slate-400 mt-1.5" id="suitEstimateDesc">Plný balíček: 52 kariet (~420 celkových opakovaní)</p>
+            <p class="text-[11px] text-slate-400 mt-1.5" id="suitEstimateDesc">4 farby: 52 kariet (~420 celkových opakovaní)</p>
           </div>
 
-          <div class="space-y-3 pt-2">
+          <div class="space-y-2.5 pt-2">
             <label class="block text-xs uppercase font-bold text-slate-400">Priradenie cvikov k znakom</label>
             
-            <!-- Pik -->
             <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-800/60 border border-slate-700/50" id="suitRow-spades">
               <span class="text-2xl text-slate-200 w-6 text-center">♠</span>
-              <select id="select-spades" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 exercise-select text-xs font-medium"></select>
-              <select id="mult-spades" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-1.5 py-1.5 text-xs font-mono">
+              <select id="select-spades" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 text-xs font-medium"></select>
+              <select id="mult-spades" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2 py-1.5 text-xs font-mono">
                 <option value="1">1×</option>
                 <option value="0.5">0.5×</option>
                 <option value="2">2×</option>
               </select>
             </div>
 
-            <!-- Srdce -->
             <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-800/60 border border-slate-700/50" id="suitRow-hearts">
               <span class="text-2xl text-rose-500 w-6 text-center">♥</span>
-              <select id="select-hearts" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 exercise-select text-xs font-medium"></select>
-              <select id="mult-hearts" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-1.5 py-1.5 text-xs font-mono">
+              <select id="select-hearts" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 text-xs font-medium"></select>
+              <select id="mult-hearts" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2 py-1.5 text-xs font-mono">
                 <option value="1">1×</option>
                 <option value="0.5">0.5×</option>
                 <option value="2">2×</option>
               </select>
             </div>
 
-            <!-- Kára -->
             <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-800/60 border border-slate-700/50" id="suitRow-diamonds">
               <span class="text-2xl text-rose-500 w-6 text-center">♦</span>
-              <select id="select-diamonds" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 exercise-select text-xs font-medium"></select>
-              <select id="mult-diamonds" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-1.5 py-1.5 text-xs font-mono">
+              <select id="select-diamonds" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 text-xs font-medium"></select>
+              <select id="mult-diamonds" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2 py-1.5 text-xs font-mono">
                 <option value="1">1×</option>
                 <option value="0.5">0.5×</option>
                 <option value="2">2×</option>
               </select>
             </div>
 
-            <!-- Tref -->
             <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-800/60 border border-slate-700/50" id="suitRow-clubs">
               <span class="text-2xl text-slate-200 w-6 text-center">♣</span>
-              <select id="select-clubs" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 exercise-select text-xs font-medium"></select>
-              <select id="mult-clubs" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-1.5 py-1.5 text-xs font-mono">
+              <select id="select-clubs" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 text-xs font-medium"></select>
+              <select id="mult-clubs" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2 py-1.5 text-xs font-mono">
                 <option value="1">1×</option>
                 <option value="0.5">0.5×</option>
                 <option value="2">2×</option>
@@ -189,21 +186,27 @@
           </div>
         </div>
 
-        <!-- NASTAVENIA PRE CUSTOM FAREBNÝ REŽIM (až 10 farieb) -->
+        <!-- REŽIM 2: FAREBNÝ ARCADE S PRIRAĎOVANÍM CVIKOV -->
         <div id="customColorOptions" class="space-y-4 hidden">
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-3 gap-2">
             <div>
-              <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Počet farieb (cvikov)</label>
-              <input type="number" id="customColorCount" min="2" max="10" value="6" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+              <label class="block text-[11px] uppercase font-bold text-slate-400 mb-1">Počet farieb</label>
+              <input type="number" id="customColorCount" min="2" max="10" value="5" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-white font-mono text-center">
             </div>
             <div>
-              <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Max opakovaní (napr. 20)</label>
-              <input type="number" id="customMaxReps" min="5" max="50" value="20" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+              <label class="block text-[11px] uppercase font-bold text-slate-400 mb-1">Max opakovaní</label>
+              <input type="number" id="customMaxReps" min="5" max="50" value="20" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-white font-mono text-center">
+            </div>
+            <div>
+              <label class="block text-[11px] uppercase font-bold text-slate-400 mb-1">Veľkosť balíčka</label>
+              <input type="number" id="customDeckSize" min="10" max="100" value="30" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-white font-mono text-center">
             </div>
           </div>
-          <div>
-            <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Veľkosť balíčka (počet kariet)</label>
-            <input type="number" id="customDeckSize" min="10" max="100" value="30" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+
+          <!-- Dynamicky generovaný zoznam pre priradenie cvikov jednotlivým farbám -->
+          <div class="space-y-2 pt-2">
+            <label class="block text-xs uppercase font-bold text-slate-400">Priradenie cvikov k jednotlivým farbám</label>
+            <div id="arcadeColorAssignments" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
           </div>
         </div>
 
@@ -211,7 +214,7 @@
 
       <div class="p-4 border-t border-slate-800 bg-slate-900/50 flex gap-2">
         <button id="btnSaveRestart" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition">
-          Uložiť a reštartovať tréning
+          Uložiť a začať tréning
         </button>
       </div>
 
@@ -219,42 +222,42 @@
   </div>
 
   <script>
-    // KNIŽNICA PREDPRIPRAVENÝCH CVIKOV
+    // KNIŽNICA CVIKOV
     const EXERCISE_LIBRARY = [
-      { name: "Push-ups (Kľuky)", defaultMult: 1 },
-      { name: "Pull-ups (Zhyby)", defaultMult: 0.5 },
-      { name: "Dips (Bradlá / Kruhy)", defaultMult: 0.5 },
-      { name: "Squats (Drepy)", defaultMult: 1 },
-      { name: "Pistol Squats (Jednonohé drepy)", defaultMult: 0.5 },
-      { name: "Lunges (Výpady)", defaultMult: 1 },
-      { name: "Burpees (Angličáky)", defaultMult: 1 },
-      { name: "V-Ups / Brucho", defaultMult: 1 },
-      { name: "Deadlift (Mŕtvy ťah)", defaultMult: 0.5 },
-      { name: "Clean (Premiestnenie)", defaultMult: 0.5 },
-      { name: "Clean & Jerk", defaultMult: 0.5 },
-      { name: "Push Press / Výtlak s činkou", defaultMult: 0.5 },
-      { name: "Thruster", defaultMult: 0.5 },
-      { name: "Kettlebell Swing", defaultMult: 1 }
+      { name: "Push-ups (Kľuky)", mult: 1 },
+      { name: "Pull-ups (Zhyby)", mult: 0.5 },
+      { name: "Dips (Bradlá / Kruhy)", mult: 0.5 },
+      { name: "Squats (Drepy)", mult: 1 },
+      { name: "Pistol Squats (Jednonohé drepy)", mult: 0.5 },
+      { name: "Lunges (Výpady)", mult: 1 },
+      { name: "Burpees (Angličáky)", mult: 1 },
+      { name: "V-Ups / Brucho", mult: 1 },
+      { name: "Deadlift (Mŕtvy ťah)", mult: 0.5 },
+      { name: "Clean (Premiestnenie)", mult: 0.5 },
+      { name: "Clean & Jerk", mult: 0.5 },
+      { name: "Push Press / Výtlak s činkou", mult: 0.5 },
+      { name: "Thruster", mult: 0.5 },
+      { name: "Kettlebell Swing", mult: 1 }
     ];
 
-    // 10 FARIEB PRE ARCADE REŽIM
+    // PALETA FARIEB PRE ARCADE
     const ARCADE_COLORS = [
-      { name: 'Red', hex: '#ef4444', text: '#ffffff' },
-      { name: 'Blue', hex: '#3b82f6', text: '#ffffff' },
-      { name: 'Emerald', hex: '#10b981', text: '#ffffff' },
-      { name: 'Amber', hex: '#f59e0b', text: '#000000' },
-      { name: 'Purple', hex: '#8b5cf6', text: '#ffffff' },
-      { name: 'Pink', hex: '#ec4899', text: '#ffffff' },
-      { name: 'Cyan', hex: '#06b6d4', text: '#000000' },
-      { name: 'Orange', hex: '#f97316', text: '#ffffff' },
-      { name: 'Lime', hex: '#84cc16', text: '#000000' },
-      { name: 'Slate', hex: '#475569', text: '#ffffff' }
+      { id: 0, name: 'Červená', hex: '#ef4444', text: 'text-white' },
+      { id: 1, name: 'Modrá', hex: '#3b82f6', text: 'text-white' },
+      { id: 2, name: 'Zelená', hex: '#10b981', text: 'text-white' },
+      { id: 3, name: 'Žltá', hex: '#eab308', text: 'text-slate-950' },
+      { id: 4, name: 'Fialová', hex: '#8b5cf6', text: 'text-white' },
+      { id: 5, name: 'Ružová', hex: '#ec4899', text: 'text-white' },
+      { id: 6, name: 'Tyrkysová', hex: '#06b6d4', text: 'text-slate-950' },
+      { id: 7, name: 'Oranžová', hex: '#f97316', text: 'text-white' },
+      { id: 8, name: 'Limetková', hex: '#84cc16', text: 'text-slate-950' },
+      { id: 9, name: 'Sivá', hex: '#64748b', text: 'text-white' }
     ];
 
-    // ŠTÁT APLIKÁCIE
+    // STAV
     let state = {
-      mode: 'classic', // 'classic' alebo 'custom'
-      suitCount: 4,    // 1, 2, 3, 4
+      mode: 'classic',
+      suitCount: 4,
       deck: [],
       currentCard: null,
       history: [],
@@ -264,19 +267,30 @@
       wakeLock: null,
       repsMap: {},
       suitsConfig: {
-        '♠': { exercise: 'Push-ups (Kľuky)', mult: 1, color: 'text-slate-900', rowId: 'spades' },
-        '♥': { exercise: 'Squats (Drepy)', mult: 1, color: 'text-rose-600', rowId: 'hearts' },
-        '♦': { exercise: 'V-Ups / Brucho', mult: 1, color: 'text-rose-600', rowId: 'diamonds' },
-        '♣': { exercise: 'Burpees (Angličáky)', mult: 1, color: 'text-slate-900', rowId: 'clubs' }
+        '♠': { exercise: 'Push-ups (Kľuky)', mult: 1, color: 'text-slate-900' },
+        '♥': { exercise: 'Squats (Drepy)', mult: 1, color: 'text-rose-600' },
+        '♦': { exercise: 'V-Ups / Brucho', mult: 1, color: 'text-rose-600' },
+        '♣': { exercise: 'Burpees (Angličáky)', mult: 1, color: 'text-slate-900' }
       },
-      customConfig: {
-        count: 6,
+      arcadeConfig: {
+        count: 5,
         maxReps: 20,
-        deckSize: 30
+        deckSize: 30,
+        colorAssignments: [
+          { exercise: 'Push-ups (Kľuky)', mult: 1 },
+          { exercise: 'Pull-ups (Zhyby)', mult: 0.5 },
+          { exercise: 'Squats (Drepy)', mult: 1 },
+          { exercise: 'Thruster', mult: 0.5 },
+          { exercise: 'Burpees (Angličáky)', mult: 1 },
+          { exercise: 'V-Ups / Brucho', mult: 1 },
+          { exercise: 'Kettlebell Swing', mult: 1 },
+          { exercise: 'Lunges (Výpady)', mult: 1 },
+          { exercise: 'Clean & Jerk', mult: 0.5 },
+          { exercise: 'Dips (Bradlá / Kruhy)', mult: 0.5 }
+        ]
       }
     };
 
-    // AUDIO EFEKT (Web Audio API)
     function playBeep(freq = 600, duration = 0.08) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -292,18 +306,16 @@
       } catch (e) {}
     }
 
-    // WAKE LOCK (Zabránenie zhasnutiu obrazovky)
     async function requestWakeLock() {
       try {
-        if ('wakeLock' in navigator) {
+        if ('wakeLock' in navigator && !state.wakeLock) {
           state.wakeLock = await navigator.wakeLock.request('screen');
-          document.getElementById('wakeLockDot').className = "inline-block w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]";
         }
       } catch (err) {}
     }
 
-    // NAPLNENIE SELECTOV CVIKMI
-    function populateSelects() {
+    // NAPLNENIE ZÁKLADNÝCH SELECTOV
+    function populateClassicSelects() {
       ['spades', 'hearts', 'diamonds', 'clubs'].forEach(suit => {
         const select = document.getElementById(`select-${suit}`);
         select.innerHTML = '';
@@ -314,12 +326,40 @@
           select.appendChild(opt);
         });
       });
-      // Predvolené hodnoty
       document.getElementById('select-spades').value = state.suitsConfig['♠'].exercise;
       document.getElementById('select-hearts').value = state.suitsConfig['♥'].exercise;
       document.getElementById('select-diamonds').value = state.suitsConfig['♦'].exercise;
       document.getElementById('select-clubs').value = state.suitsConfig['♣'].exercise;
     }
+
+    // DYNAMICKÉ GENEROVANIE FARIEB PRE ARCADE
+    function renderArcadeColorAssignmentRows() {
+      const container = document.getElementById('arcadeColorAssignments');
+      container.innerHTML = '';
+      const count = Math.min(10, Math.max(2, parseInt(document.getElementById('customColorCount').value) || 5));
+
+      for (let i = 0; i < count; i++) {
+        const color = ARCADE_COLORS[i];
+        const assigned = state.arcadeConfig.colorAssignments[i] || { exercise: EXERCISE_LIBRARY[i % EXERCISE_LIBRARY.length].name, mult: 1 };
+        
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2 p-2 rounded-xl bg-slate-800/60 border border-slate-700/50';
+        row.innerHTML = `
+          <span class="w-5 h-5 rounded-full flex-shrink-0 shadow-sm" style="background-color: ${color.hex}"></span>
+          <select id="arcadeSelect-${i}" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1.5 flex-1 text-xs font-medium">
+            ${EXERCISE_LIBRARY.map(ex => `<option value="${ex.name}" ${ex.name === assigned.exercise ? 'selected' : ''}>${ex.name}</option>`).join('')}
+          </select>
+          <select id="arcadeMult-${i}" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2 py-1.5 text-xs font-mono">
+            <option value="1" ${assigned.mult === 1 ? 'selected' : ''}>1×</option>
+            <option value="0.5" ${assigned.mult === 0.5 ? 'selected' : ''}>0.5×</option>
+            <option value="2" ${assigned.mult === 2 ? 'selected' : ''}>2×</option>
+          </select>
+        `;
+        container.appendChild(row);
+      }
+    }
+
+    document.getElementById('customColorCount').addEventListener('input', renderArcadeColorAssignmentRows);
 
     // GENEROVANIE BALÍČKA
     function generateDeck() {
@@ -353,24 +393,26 @@
           });
         });
       } else {
-        // Custom Arcade režim (do 10 farieb)
-        const count = Math.min(10, Math.max(2, state.customConfig.count));
+        // Arcade režim
+        const count = state.arcadeConfig.count;
         for (let i = 0; i < count; i++) {
           state.repsMap[i] = 0;
         }
 
-        for (let i = 0; i < state.customConfig.deckSize; i++) {
+        for (let i = 0; i < state.arcadeConfig.deckSize; i++) {
           const colorIndex = Math.floor(Math.random() * count);
           const colorObj = ARCADE_COLORS[colorIndex];
-          const reps = Math.floor(Math.random() * state.customConfig.maxReps) + 1;
-          const exName = EXERCISE_LIBRARY[colorIndex % EXERCISE_LIBRARY.length].name;
+          const assigned = state.arcadeConfig.colorAssignments[colorIndex];
+          
+          const rawReps = Math.floor(Math.random() * state.arcadeConfig.maxReps) + 1;
+          const calculatedReps = Math.max(1, Math.round(rawReps * assigned.mult));
 
           cards.push({
-            suit: `●`,
-            rank: reps.toString(),
-            reps: reps,
-            exercise: exName,
-            textColor: colorObj.text === '#ffffff' ? 'text-white' : 'text-slate-950',
+            suit: '●',
+            rank: calculatedReps.toString(),
+            reps: calculatedReps,
+            exercise: assigned.exercise,
+            textColor: colorObj.text,
             bgColor: colorObj.hex,
             isCustomColor: true,
             colorIndex: colorIndex
@@ -378,7 +420,7 @@
         }
       }
 
-      // Fisher-Yates Shuffle
+      // Zamiešanie (Fisher-Yates)
       for (let i = cards.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [cards[i], cards[j]] = [cards[j], cards[i]];
@@ -390,7 +432,7 @@
       updateUI();
     }
 
-    // POSUN NA ĎALŠIU KARTU
+    // ĎALŠIA KARTA
     function nextCard() {
       if (!state.timerRunning) startTimer();
       requestWakeLock();
@@ -404,7 +446,6 @@
       state.history.push(card);
       state.currentCard = card;
 
-      // Záznam opakovaní
       if (card.isCustomColor) {
         state.repsMap[card.colorIndex] = (state.repsMap[card.colorIndex] || 0) + card.reps;
       } else {
@@ -421,7 +462,6 @@
       const cardEl = document.getElementById('cardElement');
       const frontFace = document.getElementById('cardFrontFace');
 
-      // Farba pozadia (biela pre klasické karty, farebná pre custom)
       if (card.isCustomColor) {
         frontFace.style.backgroundColor = card.bgColor;
         frontFace.className = `absolute inset-0 border-8 border-white/20 rounded-3xl flex flex-col justify-between p-6 backface-hidden rotate-y-180 shadow-2xl ${card.textColor}`;
@@ -437,11 +477,10 @@
       document.getElementById('cardMainValue').textContent = card.reps;
       document.getElementById('cardExerciseName').textContent = card.exercise;
 
-      // Otočenie karty
       cardEl.classList.add('rotate-y-180');
     }
 
-    // AKTUALIZÁCIA TEXTOV A POČÍTADIEL
+    // AKTUALIZÁCIA ŠTATISTÍK
     function updateUI() {
       const remaining = state.deck.length;
       const totalCards = state.deck.length + state.history.length;
@@ -451,147 +490,13 @@
       state.history.forEach(c => totalReps += c.reps);
       document.getElementById('totalRepsCount').textContent = `Spolu: ${totalReps} rep`;
 
-      // Mini prehľad pod kartou
       const grid = document.getElementById('repsSummaryGrid');
       grid.innerHTML = '';
 
       if (state.mode === 'classic') {
         const activeSuits = ['♠', '♥', '♦', '♣'].slice(0, state.suitCount);
+        grid.className = `grid grid-cols-${activeSuits.length} gap-2 text-center text-xs font-mono`;
         activeSuits.forEach(suit => {
           const col = document.createElement('div');
           col.className = 'bg-slate-900 border border-slate-800 p-2 rounded-xl flex flex-col items-center';
           const symbolColor = (suit === '♥' || suit === '♦') ? 'text-rose-500' : 'text-slate-300';
-          col.innerHTML = `
-            <span class="text-base font-bold ${symbolColor}">${suit}</span>
-            <span class="text-[10px] text-slate-400 truncate w-full px-1">${state.suitsConfig[suit].exercise.split(' ')[0]}</span>
-            <span class="text-sm font-black text-white mt-0.5">${state.repsMap[suit] || 0}</span>
-          `;
-          grid.appendChild(col);
-        });
-      } else {
-        grid.className = 'grid grid-cols-5 gap-1.5 text-center text-xs font-mono';
-        for (let i = 0; i < state.customConfig.count; i++) {
-          const colorObj = ARCADE_COLORS[i];
-          const col = document.createElement('div');
-          col.className = 'p-1.5 rounded-lg border border-slate-800 flex flex-col items-center';
-          col.style.backgroundColor = '#0f172a';
-          col.innerHTML = `
-            <span class="w-3 h-3 rounded-full mb-1" style="background-color: ${colorObj.hex}"></span>
-            <span class="text-xs font-black text-white">${state.repsMap[i] || 0}</span>
-          `;
-          grid.appendChild(col);
-        }
-      }
-    }
-
-    // STOPKY
-    function startTimer() {
-      state.timerRunning = true;
-      state.timerInterval = setInterval(() => {
-        state.timerSeconds++;
-        const mins = String(Math.floor(state.timerSeconds / 60)).padStart(2, '0');
-        const secs = String(state.timerSeconds % 60).padStart(2, '0');
-        document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
-      }, 1000);
-    }
-
-    function resetTimer() {
-      clearInterval(state.timerInterval);
-      state.timerInterval = null;
-      state.timerRunning = false;
-      state.timerSeconds = 0;
-      document.getElementById('timerDisplay').textContent = '00:00';
-    }
-
-    // FINIŠ WORKOUTU
-    function finishWorkout() {
-      clearInterval(state.timerInterval);
-      state.timerRunning = false;
-      playBeep(880, 0.4);
-      alert(`🎉 HOTOVO! Tréning dokončený za ${document.getElementById('timerDisplay').textContent} s celkovým počtom ${document.getElementById('totalRepsCount').textContent.replace('Spolu: ', '')}!`);
-    }
-
-    // EVENT LISTENERY
-    document.getElementById('btnNext').addEventListener('click', nextCard);
-    document.getElementById('cardElement').addEventListener('click', nextCard);
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' && !document.getElementById('settingsModal').classList.contains('hidden')) return;
-      if (e.code === 'Space') { e.preventDefault(); nextCard(); }
-    });
-
-    // OTVÁRANIE / ZATVÁRANIE NASTAVENÍ
-    const modal = document.getElementById('settingsModal');
-    document.getElementById('btnSettings').addEventListener('click', () => modal.classList.remove('hidden'));
-    document.getElementById('btnCloseSettings').addEventListener('click', () => modal.classList.add('hidden'));
-
-    // PREPÍNANIE REŽIMU
-    document.getElementById('modeBtnClassic').addEventListener('click', () => {
-      state.mode = 'classic';
-      document.getElementById('modeBtnClassic').className = "py-2.5 px-3 rounded-xl border font-semibold text-center border-indigo-500 bg-indigo-500/20 text-white";
-      document.getElementById('modeBtnCustom').className = "py-2.5 px-3 rounded-xl border font-semibold text-center border-slate-700 bg-slate-800/60 text-slate-400";
-      document.getElementById('classicOptions').classList.remove('hidden');
-      document.getElementById('customColorOptions').classList.add('hidden');
-      document.getElementById('modeBadge').textContent = `Režim: ${state.suitCount} farby`;
-    });
-
-    document.getElementById('modeBtnCustom').addEventListener('click', () => {
-      state.mode = 'custom';
-      document.getElementById('modeBtnCustom').className = "py-2.5 px-3 rounded-xl border font-semibold text-center border-indigo-500 bg-indigo-500/20 text-white";
-      document.getElementById('modeBtnClassic').className = "py-2.5 px-3 rounded-xl border font-semibold text-center border-slate-700 bg-slate-800/60 text-slate-400";
-      document.getElementById('classicOptions').classList.add('hidden');
-      document.getElementById('customColorOptions').classList.remove('hidden');
-      document.getElementById('modeBadge').textContent = `Režim: Farebný Arcade`;
-    });
-
-    // VÝBER POČTU FARIEB V KLASICKOM REŽIME
-    document.querySelectorAll('.suit-count-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.suit-count-btn').forEach(b => {
-          b.className = "suit-count-btn py-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 font-bold";
-        });
-        btn.className = "suit-count-btn py-2 rounded-lg border border-indigo-500 bg-indigo-500/20 text-white font-bold";
-        state.suitCount = parseInt(btn.dataset.suits);
-
-        const cardCounts = { 1: 13, 2: 26, 3: 39, 4: 52 };
-        document.getElementById('suitEstimateDesc').textContent = 
-          `${state.suitCount} farieb: ${cardCounts[state.suitCount]} kariet (~${state.suitCount * 105} celkových opakovaní pri 1×)`;
-        document.getElementById('modeBadge').textContent = `Režim: ${state.suitCount} farby`;
-
-        // Skrytie/zobrazenie riadkov cvikov
-        ['spades', 'hearts', 'diamonds', 'clubs'].forEach((suitName, idx) => {
-          const row = document.getElementById(`suitRow-${suitName}`);
-          if (idx < state.suitCount) row.classList.remove('opacity-30', 'pointer-events-none');
-          else row.classList.add('opacity-30', 'pointer-events-none');
-        });
-      });
-    });
-
-    // ULOŽIŤ A REŠTARTOVAŤ
-    document.getElementById('btnSaveRestart').addEventListener('click', () => {
-      // Uloženie klasických nastavení
-      state.suitsConfig['♠'].exercise = document.getElementById('select-spades').value;
-      state.suitsConfig['♠'].mult = parseFloat(document.getElementById('mult-spades').value);
-      state.suitsConfig['♥'].exercise = document.getElementById('select-hearts').value;
-      state.suitsConfig['♥'].mult = parseFloat(document.getElementById('mult-hearts').value);
-      state.suitsConfig['♦'].exercise = document.getElementById('select-diamonds').value;
-      state.suitsConfig['♦'].mult = parseFloat(document.getElementById('mult-diamonds').value);
-      state.suitsConfig['♣'].exercise = document.getElementById('select-clubs').value;
-      state.suitsConfig['♣'].mult = parseFloat(document.getElementById('mult-clubs').value);
-
-      // Uloženie custom nastavení
-      state.customConfig.count = parseInt(document.getElementById('customColorCount').value) || 6;
-      state.customConfig.maxReps = parseInt(document.getElementById('customMaxReps').value) || 20;
-      state.customConfig.deckSize = parseInt(document.getElementById('customDeckSize').value) || 30;
-
-      modal.classList.add('hidden');
-      resetTimer();
-      document.getElementById('cardElement').classList.remove('rotate-y-180');
-      generateDeck();
-    });
-
-    // INICIALIZÁCIA
-    populateSelects();
-    generateDeck();
-  </script>
-</body>
-</html>
